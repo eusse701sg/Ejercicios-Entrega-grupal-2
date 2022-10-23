@@ -1,0 +1,805 @@
+Ejercicio Herencia
+Clase Cuenta
+package CuentaBancaria;
+
+public class Cuenta {
+protected float saldo;
+protected int numconsignaciones= 0;
+protected int numretiros= 0;
+protected float tasaanual;
+protected float comisionmen= 0;
+
+public Cuenta(float saldo, float tasaanual){
+    this.saldo = saldo;
+    this.tasaanual = tasaanual;
+}
+
+public void consignar(float cantidad){
+    saldo = saldo + cantidad;
+    numconsignaciones = numconsignaciones+1;
+}
+
+public void retirar(float cantidad){
+float nuevosaldo = saldo -cantidad;
+if (nuevosaldo >=0){
+    saldo -= cantidad;
+    numretiros = numretiros+1;
+}else{
+    System.out.println("La cantidad a retirar excede el saldo actual. ");
+    }
+}
+
+public void calcularinteres() {
+  float tasamensual = tasaanual/12;
+  float interesmensual = saldo*tasamensual;
+  saldo += interesmensual;
+}
+
+public void extractomensual(){
+    saldo -= comisionmen;
+    calcularinteres();    
+    }
+}
+
+Clase Cuenta Ahorros
+package CuentaBancaria;
+
+public class CuentaAhorros extends Cuenta {
+    private boolean activa;
+    
+    public CuentaAhorros(float saldo, float tasa){
+        super(saldo,tasa);
+        if(saldo < 10000){
+            activa = false;
+        }else{
+            activa=true;}
+    }
+    
+    public void Retirar(float cantidad){
+        if(activa)
+            super.retirar(cantidad);
+    }
+    
+    public void Consignar(float cantidad){
+        if(activa)
+            super.consignar(cantidad);
+    }
+    
+    public void Extractomensual(){
+        if(numretiros>4){
+            comisionmen+=(numretiros-4)*1000;
+        }
+        super.extractomensual();
+        if (saldo<10000)
+            activa=false;
+    }
+    
+    public void imprimir(){
+        System.out.println("Saldo = $ " + saldo);
+        System.out.println("Comisión mensual = $ " + comisionmen);
+        System.out.println("Número de transacciones = " + (numconsignaciones + numretiros));
+        System.out.println();        
+    }
+}
+Clase CuentaCorriente
+package CuentaBancaria;
+
+
+public class CuentaCorriente extends Cuenta {
+    float sobregiro;
+    
+    public CuentaCorriente(float saldo, float tasa){
+        super(saldo,tasa);
+        sobregiro= 0;
+    }
+    
+    public void Retirar(float cantidad){
+        float resultado = saldo-cantidad;
+        
+        if(resultado<0){
+            saldo=0;
+        }else{
+            super.retirar(cantidad);
+        }
+    }
+    public void Consignar(float cantidad){
+        float residuo = sobregiro - cantidad;
+        if(sobregiro>0){
+            if(residuo>0){
+                sobregiro=0;
+                saldo=residuo;
+            }else{
+                sobregiro = -residuo;
+                saldo = 0;
+            }
+        }else{
+            super.consignar(cantidad);
+        }
+    }
+    public void imprimir(){
+        System.out.println("Saldo = $" + saldo);
+        System.out.println("Cargo mensual = $" + comisionmen);
+        System.out.println("Número de transacciones = $" + (numconsignaciones + numretiros));
+        System.out.println("Valor de sobregiro = $" + (numconsignaciones + numretiros));
+        System.out.println();
+    }
+}
+ClasePruebaCUenta
+
+package CuentaBancaria;
+import java.util.*;
+
+public class PruebaCuenta {
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.println("Cuenta de ahorros");
+        System.out.println("Ingrese saldo inicial= $");
+        float saldoInicialAhorros = input.nextFloat();
+        System.out.print("Ingrese tasa de interés= ");
+        float tasaAhorros = input.nextFloat();
+        CuentaAhorros cuenta1 = new
+            CuentaAhorros(saldoInicialAhorros, tasaAhorros);
+        System.out.print("Ingresar cantidad a consignar: $");
+        float cantidadDepositar = input.nextFloat();
+        cuenta1.consignar(cantidadDepositar);
+        System.out.print("Ingresar cantidad a retirar: $");
+        float cantidadaRetirar = input.nextFloat();
+        cuenta1.retirar(cantidadaRetirar);
+        cuenta1.Extractomensual();
+        cuenta1.imprimir();
+    }
+}
+
+
+Ejercicio Clases Abstractas
+CLASE ANIMAL
+
+package Animales;
+
+public abstract class Animal {
+    protected String sonido;
+    protected String alimentos;
+    protected String hábitat;
+    protected String nombreCientífico;
+    
+    public abstract String getNombreCientífico();
+    public abstract String getSonido();
+    public abstract String getAlimentos();
+    public abstract String getHábitat();
+}
+CLASE CATNIDO
+package Animales;
+
+public abstract class Cátnido extends Animal {
+    
+}
+CLASE FELINO
+package Animales;
+
+public abstract class Felino extends Animal {
+    
+}
+CLASE GATO
+package Animales;
+
+public class Gato extends Felino {
+    
+    @Override
+    public String getSonido(){
+        return "Maullido";
+    }
+    
+    @Override
+    public String getAlimentos(){
+        return "Ratones";
+    }
+    
+    @Override
+    public String getNombreCientífico(){
+        return "Felis silvestris catus";
+    }
+    
+    @Override
+    public String getHábitat(){
+        return "Doméstico";
+    }
+}
+CLASE LEON
+package Animales;
+
+public class León extends Felino {
+    @Override
+    public String getSonido(){
+        return "Rugido";
+    }
+    
+    @Override
+    public String getAlimentos(){
+        return "Carnívoro";
+    }
+    
+    @Override
+    public String getHábitat(){
+        return "Praderas";
+    }
+    
+    @Override
+    public String getNombreCientífico(){
+        return "Panthera leo";
+    }
+}
+CLASE LOBO
+package Animales;
+
+public class Lobo extends Cátnido {
+    @Override
+    public String getSonido(){
+        return"Aullido";
+    }
+    
+    @Override
+    public String getAlimentos(){
+        return "Carnívoro";
+    }
+    
+    @Override
+    public String getHábitat(){
+        return "Bosque";
+    }
+    
+    @Override
+    public String getNombreCientífico(){
+        return "Canis lupus";
+    }
+}
+
+CLASE PERRO
+package Animales;
+
+public class Perro extends Cátnido {
+    @Override
+    public String getSonido(){
+        return"Ladrido";
+    }    
+        
+    @Override
+    public String getAlimentos(){
+        return"Carnívoro";
+    }
+    
+    @Override
+    public String getNombreCientífico(){
+        return "Canis lupus familiaris";
+    }
+    
+    @Override
+    public String getHábitat(){
+        return "Doméstico";
+    }
+}
+CLASE PRUEBA
+package Animales;
+
+public class Prueba {
+
+    public static void main(String[] args) {
+        Animal[] animales = new Animal[4];
+        
+        animales[0]= new Gato();
+        animales[1]= new Perro();
+        animales[2]= new Lobo();
+        animales[3]= new León();
+        
+        for(int i=0; i<animales.length; i++){
+            System.out.println(animales[i].getNombreCientífico());
+            System.out.println("Sonido: " + animales[i].getSonido());
+            System.out.println("Alimentos: " + animales[i].getAlimentos());
+            System.out.println("Habitat: " + animales[i].getHábitat());
+            System.out.println();
+        }
+    }
+}
+
+EJERCICIO METODOS ABSTRACTOS
+CLASE CICLISTA	
+package CarreraCiclística;
+
+public abstract class Ciclista {
+    private int identificador;
+    private String nombre;
+    private int tiempoAcumulado;
+    
+    public Ciclista(int identificador, String nombre){
+        this.tiempoAcumulado = 0;
+        this.identificador= identificador;
+        this.nombre = nombre;
+    }
+    
+    abstract String imprimirTipo();
+    
+    protected int getIdentificador(){
+        return identificador;
+    }
+    
+    protected void setIdentificador(int identificador){
+        this.identificador = identificador;
+    }
+    
+    protected String getNombre(){
+        return nombre;
+    }
+    
+    protected void setNombre(String nombre){
+        this.nombre=nombre;
+    }
+    
+    protected int getPosiciónGeneral(int posiciónGeneral){
+        return posiciónGeneral;
+    }
+    
+    protected void setPosiciónGeneral(int posiciónGeneral){
+        posiciónGeneral = posiciónGeneral;
+    }
+    
+    protected int getTiempoAcumulado(){
+        return tiempoAcumulado;
+    }
+    
+    protected void setTiempoAcumulado(int tiempoAcumulado){
+        this.tiempoAcumulado = tiempoAcumulado;
+    }
+    
+    protected void imprimir(){
+        System.out.println("Identificador = " +identificador);
+        System.out.println("Nombre = " +nombre);
+        System.out.println("Tiempo Acumulado = " +tiempoAcumulado);
+    }
+}
+CLASE CONTRARRELOJISTA
+package CarreraCiclística;
+
+public class Contrarrelojista extends Ciclista {
+    private double velocidadMáxima;
+    
+    public Contrarrelojista(int identificador, String nombre, double velocidadMáxima){
+        super(identificador, nombre);
+        this.velocidadMáxima = velocidadMáxima;
+    }
+    
+    protected double getVelocidadMáxima(){
+        return velocidadMáxima;
+    }
+    
+    protected void setVelocidadMáxima(double velocidadMáxima){
+        this.velocidadMáxima = velocidadMáxima;
+    }
+    
+    @Override
+    protected void imprimir(){
+        super.imprimir();
+        System.out.println("Aceleración promedio = "+ velocidadMáxima);
+    }
+    
+    @Override
+    protected String imprimirTipo(){
+        return "Es un contrarrelojista";
+    }
+}
+CLASE EQUIPO
+package CarreraCiclística;
+import java.util.*;
+
+public class Equipo {
+    private String nombre;
+    private static double totalTiempo;
+    private String país;
+    Vector listaCiclistas;
+    
+    public Equipo(String nombre, String país){
+        this.nombre = nombre;
+        this.país = país;
+        totalTiempo = 0;
+        listaCiclistas = new Vector();
+    }
+    
+    public String getNombre(){
+        return nombre;
+    }
+    
+    public void setNombre(String nombre){
+        this.nombre = nombre;
+    }
+    
+    public String getPaís(){
+        return país;
+    }
+    
+    public void setPaís(String país){
+        this.país = país;
+    }
+    
+    void añadirCiclista(Ciclista ciclista){
+        listaCiclistas.add(ciclista);
+    }
+
+    void listarEquipo(){
+        for (int i=0; i<listaCiclistas.size(); i++){
+            Ciclista c = (Ciclista)listaCiclistas.elementAt(i);
+            System.out.println(c.getNombre());
+        }
+    }
+    
+    void buscarCiclista(){
+        Scanner sc = new Scanner(System.in);
+        String nombreCiclista= sc.next();
+        for(int i=0; i<listaCiclistas.size();i++){
+            Ciclista c= (Ciclista)listaCiclistas.elementAt(i);
+            
+            if (c.getNombre().equals(nombreCiclista)){
+                System.out.println(c.getNombre());
+            }
+        }
+    }
+    void calcularTotalTiempo(){
+        for(int i= 0; i<listaCiclistas.size();i++){
+            Ciclista c=(Ciclista)listaCiclistas.elementAt(i);
+            totalTiempo = totalTiempo + c.getTiempoAcumulado();
+        }
+    }
+    
+    void imprimir(){
+        System.out.println("Nombre del equipo= " + nombre);
+        System.out.println("País= " + país);
+        System.out.println("Total tiempo del euqipo= " + totalTiempo);
+    }
+}
+CLASE ESCLAADOR
+package CarreraCiclística;
+
+public class Escalador extends Ciclista {
+    private double aceleraciónPromedio;
+    private double gradoRampa;
+    
+    public Escalador(int identificador, String nombre, double aceleraciónPromedio, double gradoRampa){
+        super(identificador,nombre);
+        this.aceleraciónPromedio = aceleraciónPromedio;
+        this.gradoRampa= gradoRampa;
+    }
+    protected double getAceleraciónPromedio(){
+        return aceleraciónPromedio;
+    }
+    
+    protected void setAceleraciónPromedio(double aceleraciónPromedio){
+        this.aceleraciónPromedio= aceleraciónPromedio;
+    }
+    
+    protected double getGradoRampa(){
+        return gradoRampa;
+    }
+    
+    protected void setGradoRamapa(double gradoRampa){
+        this.gradoRampa = gradoRampa;
+    }
+    
+    @Override
+    protected void imprimir(){
+        super.imprimir();
+        System.out.println("Aceleración promedio = " + aceleraciónPromedio);
+        System.out.println("Grado de rampa = " + gradoRampa);
+    }
+    
+    @Override
+    protected String imprimirTipo(){
+        return "Es un escalador";
+    }
+}
+CLASE PRUEBA
+package CarreraCiclística;
+
+public class Prueba {
+
+    public static void main(String[] args) {
+        Equipo equipo1 = new Equipo("Sky","Estados Unidos");
+        Velocista velocista1 = new Velocista(123979,"Geraint Thomas",320,25);
+        Escalador escalador1= new Escalador(123980,"Egan Bernal",25,10);
+        Contrarrelojista contrarrelojista1 = new Contrarrelojista(123981,"Jonathan Castroviejo",120);
+        equipo1.añadirCiclista(velocista1);
+        equipo1.añadirCiclista(escalador1);
+        equipo1.añadirCiclista(contrarrelojista1);
+        velocista1.setTiempoAcumulado(365);
+        escalador1.setTiempoAcumulado(370);
+        equipo1.calcularTotalTiempo();
+        equipo1.imprimir();
+        equipo1.listarEquipo();
+    }
+}
+CLASE VELOCISTA
+package CarreraCiclística;
+
+public class Velocista extends Ciclista {
+    private double potenciaPromedio;
+    private double velocidadPromedio;
+    
+    public Velocista(int identificador, String nombre, double potenciaPromedio, double velocidadPromedio){
+        super(identificador, nombre);
+        this.potenciaPromedio = potenciaPromedio;
+        this.velocidadPromedio = velocidadPromedio;
+    }
+    
+    protected double getPotenciaPromedio(){
+        return potenciaPromedio;
+    }
+    
+    protected void setPotenciaPromedio(double potenciaPromedio){
+        this.potenciaPromedio = potenciaPromedio;
+    }
+    
+    protected double getvelocidadPromedio(){
+        return velocidadPromedio;
+    }
+    
+    protected void setVelocidadPromedio(double velocidadPromedio){
+        this.velocidadPromedio = velocidadPromedio;
+    }
+    
+    @Override
+    protected void imprimir(){
+        super.imprimir();
+        System.out.println("Potencia promedio= "+ potenciaPromedio);
+        System.out.println("Velocidad promedio= "+velocidadPromedio);
+    }
+    
+    @Override
+    protected String imprimirTipo(){
+        return "Es un velocista";
+    }
+}
+
+EJERCICIO PAQUETESYMETODOSDE ACCESO
+CLASE APARTAESTUDIO
+package Inmuebles;
+
+public class Apartaestudio extends Apartamento {
+    protected static double valorArea= 1500000;
+    
+    public Apartaestudio(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños){
+        super(identificadorInmobiliario,área,dirección,1,1);
+    }
+    void imprimir(){
+        super.imprimir();
+        System.out.println();
+    }
+}
+CLASE APARETAMENTO
+package Inmuebles;
+
+public class Apartamento extends InmuebleVivienda {
+    public Apartamento(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños) {
+        super(identificadorInmobiliario, área, dirección, númeroHabitaciones, númeroBaños);
+    }
+    void imprimir(){
+        super.imprimir();
+    }
+}
+CLASE APARTAMENTO FAMILIAR
+package Inmuebles;
+
+public class ApartamentoFamiliar extends Apartamento{
+    protected static double valorArea = 2000000;
+    protected int valorAdministración;
+    
+    public ApartamentoFamiliar(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños, int valorAdministración){
+        super(identificadorInmobiliario, área, dirección, númeroHabitaciones, númeroBaños);
+        this.valorAdministración = valorAdministración;
+    }
+    @Override
+    void imprimir(){
+        super.imprimir();
+        System.out.println("Valor de la administración = $"+valorAdministración);
+        System.out.println();
+    }
+}
+CLASE CASA
+package Inmuebles;
+
+public class Casa extends InmuebleVivienda {
+    protected int númeroPisos;
+    
+    public Casa(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños, int númeroPisos){
+        super(identificadorInmobiliario, área, dirección, númeroHabitaciones, númeroBaños);
+        this.númeroPisos = númeroPisos;
+    }
+    @Override
+    void imprimir(){
+        super.imprimir();
+        System.out.println("Número de pisos = "+ númeroPisos);
+    }
+}
+CLASE CASACONJUNTOCERRTADO
+package Inmuebles;
+
+public class CasaConjuntoCerrado extends CasaUrbana {
+    protected static double valorArea=2500000;
+    protected int valorAdministación;
+    protected boolean tienePiscina;
+    protected boolean tieneCamposDeportivos;
+    
+    public CasaConjuntoCerrado(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños, int númeroPisos, int valorAdministración, boolean tienePiscina, boolean tieneCamposDeportivos){
+        super(identificadorInmobiliario, área, dirección,númeroHabitaciones, númeroBaños, númeroPisos);
+        this.valorAdministación = valorAdministación;
+        this.tienePiscina = tienePiscina;
+        this.tieneCamposDeportivos = tieneCamposDeportivos;
+    }
+    void imprimir(){
+        super.imprimir();
+        System.out.println("Tiene piscina? = "+tienePiscina);
+        System.out.println("Tiene campos deportivos? = "+tieneCamposDeportivos);
+        System.out.println();
+    }
+    
+}
+CLASE CASA INDEPENDIENTE
+package Inmuebles;
+
+public class CasaIndependiente extends CasaUrbana {
+    protected static double valorArea= 3000000;
+    
+    public CasaIndependiente(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños, int númeroPisos){
+        super(identificadorInmobiliario, área, dirección, númeroHabitaciones, númeroBaños, númeroPisos);
+    }
+    @Override
+    void imprimir(){
+        super.imprimir();
+        System.out.println();
+    }
+}
+CLASE CASA RURAL
+package Inmuebles;
+
+public class CasaRural extends Casa{
+    protected static double valorArea = 1500000;
+    protected int distanciaCabera;
+    protected int altitud;
+    
+    public CasaRural(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños, int númeroPisos, int distanciaCabera, int altitud){
+        super(identificadorInmobiliario, área, dirección, númeroHabitaciones, númeroBaños, númeroPisos);
+        this.distanciaCabera = distanciaCabera;
+        this.altitud = altitud;
+    }
+    void imprimir(){
+        super.imprimir();
+        System.out.println("Distancia la cabecera municipal = "+ distanciaCabera + "km.");
+        System.out.println("Altitud sobre el nivel del mar= "+ altitud+ "metros.");
+        System.out.println();
+    }
+}
+CLASE CASA URBANA
+package Inmuebles;
+
+public class CasaUrbana extends Casa {
+    public CasaUrbana(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños, int númeroPisos){
+        super(identificadorInmobiliario, área, dirección, númeroHabitaciones, númeroBaños, númeroPisos);
+      
+    }
+    void imprimir(){
+        super.imprimir();
+    }
+    
+}
+CLASE INMUEBLE
+package Inmuebles;
+
+public class Inmueble {
+    protected int identificadorInmobiliario;
+    protected int área;
+    protected String dirección;
+    protected double precioVenta;
+    
+    Inmueble(int identificadorInmobiliario,int área, String dirección){
+        this.identificadorInmobiliario = identificadorInmobiliario;
+        this.área= área;
+        this.dirección = dirección;
+    }
+    
+    double calcularPrecioVenta(double valorArea){
+        precioVenta = área* valorArea;
+        return precioVenta;
+    }
+    
+    void imprimir(){
+        System.out.println("Identificador inmobiliario = " + identificadorInmobiliario);
+        System.out.println("Area= "+área);
+        System.out.println("Dirección= "+dirección);
+        System.out.println("Precio de venta= $ "+precioVenta);
+    }
+}
+CLASE INMUEBLE VIVIENDA
+package Inmuebles;
+
+public class InmuebleVivienda extends Inmueble {
+    protected int númeroHabitaciones;
+    protected int númeroBaños;
+    
+    public InmuebleVivienda(int identificadorInmobiliario, int área, String dirección, int númeroHabitaciones, int númeroBaños){
+        super(identificadorInmobiliario, área, dirección);
+        
+        this.númeroHabitaciones= númeroHabitaciones;
+        this.númeroBaños=númeroBaños;
+    }
+    
+    void imprimir(){
+        super.imprimir();
+        System.out.println("Número de habitaciones = "+númeroHabitaciones);
+        System.out.println("Número de baños=  "+númeroBaños);
+    }
+}
+CLASE LOCAL
+package Inmuebles;
+
+public class Local extends Inmueble {
+    enum tipo {INTERNO,CALLE};
+    protected tipo tipoLocal;
+    
+    public Local(int identificadorInmobiliario, int área, String dirección, tipo tipoLocal){
+        super(identificadorInmobiliario,área,dirección);
+        this.tipoLocal= tipoLocal;
+    }
+    void imprimir(){
+        super.imprimir();
+        System.out.println("Tipo de local = "+tipoLocal);
+    }
+}
+CLASE LOCAL COMERCIAL
+package Inmuebles;
+
+public class LocalComercial extends Local {
+    protected static double valorArea= 3000000;
+    protected String centroComercial;
+    
+    public LocalComercial(int identificadorInmobiliario, int área, String dirección, tipo tipoLocal, String centroComercial){
+        super(identificadorInmobiliario, área, dirección, tipoLocal);
+        this.centroComercial = centroComercial;
+    }
+    void imprimir(){
+        super.imprimir();
+        System.out.println("Centro comercial = "+centroComercial);
+        System.out.println();
+    }
+    
+}
+CLASE OFICINA
+package Inmuebles;
+
+public class Oficina extends Local{
+    protected static double valorArea = 3500000;
+    protected boolean esGobierno;
+    
+    public Oficina(int identificadorInmobiliario, int área, String dirección, tipo tipoLocal, boolean esGobierno){
+        super(identificadorInmobiliario, área, dirección, tipoLocal);
+        this.esGobierno = esGobierno;
+    }
+    void imprimir() {
+        super.imprimir();
+        System.out.println("Es oficina gubernamental = "+esGobierno);
+        System.out.println();
+    }
+    
+}
+CLASE PRUEBA
+package Inmuebles;
+
+public class Prueba {
+
+    public static void main(String[] args) {
+        ApartamentoFamiliar apto1 = new ApartamentoFamiliar(103067,120, "Avenida Santander 45-45",3,2,200000);
+        System.out.println("Datos apartamento");
+        apto1.calcularPrecioVenta(apto1.valorArea);
+        apto1.imprimir();
+        
+        System.out.println("Datos apartamento");
+        Apartaestudio aptestudio1 = new Apartaestudio(12354,50,"Avenida Caracas 30-15",1,1);
+        aptestudio1.calcularPrecioVenta(aptestudio1.valorArea);
+        aptestudio1.imprimir();
+    }
+}
